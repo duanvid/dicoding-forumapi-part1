@@ -1,4 +1,4 @@
-class AddNewThread {
+class NewThread {
     constructor(payload) {
         this._verifyPayload(payload)
 
@@ -10,13 +10,13 @@ class AddNewThread {
 
     _verifyPayload({ title, body }) {
         if (!title || !body) {
-            throw new Error('ADD_NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+            throw new Error('NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
         }
 
         if (typeof title !== 'string' || typeof body !== 'string') {
-            throw new Error('ADD_NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE');
+            throw new Error('NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE');
         }
     }
 }
 
-module.exports = AddNewThread;
+module.exports = NewThread;

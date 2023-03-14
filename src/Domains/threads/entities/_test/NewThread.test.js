@@ -1,4 +1,4 @@
-const AddNewThread = require('../AddNewThread');
+const NewThread = require('../NewThread');
 
 describe('AddNewThread entities', () => {
     it('should throw error when payload did not contain needed property', () => {
@@ -8,7 +8,7 @@ describe('AddNewThread entities', () => {
         };
 
         // Action and Assert
-        expect(() => new AddNewThread(payload)).toThrowError('ADD_NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+        expect(() => new NewThread(payload)).toThrowError('ADD_NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     });
 
     it('should throw error when payload did not contain correct datatype', () => {
@@ -19,7 +19,7 @@ describe('AddNewThread entities', () => {
         };
 
         // Action and Assert
-        expect(() => new AddNewThread(payload)).toThrowError('ADD_NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE');
+        expect(() => new NewThread(payload)).toThrowError('ADD_NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE');
     })
 
     it('should create newThread object correctly', () => {
@@ -30,7 +30,7 @@ describe('AddNewThread entities', () => {
         };
 
         // Action
-        const { title, body } = new AddNewThread(payload);
+        const { title, body } = new NewThread(payload);
 
         // Assert
         expect(title).toEqual(payload.title);

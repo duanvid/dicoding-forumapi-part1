@@ -2,7 +2,10 @@ const routes = (handler) => ([
     {
         method: 'POST',
         path: '/threads',
-        method: handler.postThreadsHandler,
+        handler: handler.postThreadsHandler,
+        options: {
+            auth: 'forumapi_jwt'
+        },
     },
 ])
 
