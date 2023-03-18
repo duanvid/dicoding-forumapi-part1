@@ -48,8 +48,8 @@ describe('/threads endpoint', () => {
             const requestPayload = {
                 title: 'thread title without body'
             };
-            const server = await createServer(container)
-            const accessToken = await ServerTestHelper.getAccessToken()
+            const server = await createServer(container);
+            const accessToken = await ServerTestHelper.getAccessToken();
 
             // Action
             const response = await server.inject({
@@ -68,7 +68,7 @@ describe('/threads endpoint', () => {
             expect(responseJson.message).toEqual('tidak dapat menambahkan threads karena properti yg dibutuhkan tidak ada')
         })
 
-        it('should response 400 when request payload not contain correect data type', async () => {
+        it('should response 400 when request payload not contain correct data type', async () => {
             // Arrange
             const requestPayload = {
                 title: ['thread title'],

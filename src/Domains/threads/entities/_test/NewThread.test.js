@@ -1,3 +1,4 @@
+const NewComment = require('../../../comments/entities/NewComment');
 const NewThread = require('../NewThread');
 
 describe('AddNewThread entities', () => {
@@ -8,7 +9,7 @@ describe('AddNewThread entities', () => {
         };
 
         // Action and Assert
-        expect(() => new NewThread(payload)).toThrowError('ADD_NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+        expect(() => new NewThread(payload)).toThrowError('NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     });
 
     it('should throw error when payload did not contain correct datatype', () => {
@@ -19,7 +20,7 @@ describe('AddNewThread entities', () => {
         };
 
         // Action and Assert
-        expect(() => new NewThread(payload)).toThrowError('ADD_NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE');
+        expect(() => new NewThread(payload)).toThrowError('NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE');
     })
 
     it('should create newThread object correctly', () => {

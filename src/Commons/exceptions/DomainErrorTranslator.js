@@ -19,6 +19,8 @@ DomainErrorTranslator._directories = {
   'DELETE_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('refresh token harus string'),
   'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat menambahkan threads karena properti yg dibutuhkan tidak ada'),
   'NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE': new InvariantError('tidak dapat menambahkan threads, tipe data tidak valid'),
+  'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('Tidak dapat menambahkan komentar, Payload content tidak valid'),
+  'NEW_COMMENT.NOT_CONTAIN_CORRECT_DATA_TYPE': new InvariantError('Tidak dapat menambahkan komentar, tipe data komentar tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;
