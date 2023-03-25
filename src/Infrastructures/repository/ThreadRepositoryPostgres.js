@@ -1,5 +1,6 @@
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 const AddedThread = require("../../Domains/threads/entities/AddedThread");
+const ThreadDetail = require("../../Domains/threads/entities/ThreadDetail");
 const ThreadRepository = require("../../Domains/threads/ThreadRepository");
 
 class ThreadRepositoryPostgres extends ThreadRepository{
@@ -10,11 +11,12 @@ class ThreadRepositoryPostgres extends ThreadRepository{
     }
 
     async addThread(payload, credentialId) {
-        const { title, body } = payload
-        const id = `thread-${this._idGenerator()}`
+        const { title, body } = payload;
+        const createdAt = new Date();
+        const id = `thread-${this._idGenerator()}`;
         const query = {
-            text: 'INSERT INTO threads VALUES($1, $2, $3, $4) RETURNING id, title, owner',
-            values: [id, title, body, credentialId]
+            text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5) RETURNING id, title, owner',
+            values: [id, title, body, credentialId, createdAt]
         }
 
         const result = await this._pool.query(query)
@@ -31,6 +33,30 @@ class ThreadRepositoryPostgres extends ThreadRepository{
         if (!result.rows.length) {
             throw new NotFoundError('Thread tidak ditemukan')
         }
+    };
+
+    async getThreadById(threadId) {
+        const query = {
+            text: `
+            SELECT
+                threads.id,
+                title,
+                body,
+                username
+            FROM
+                threads
+            LEFT JOIN
+                users
+            ON
+                users.id = owner
+            WHERE
+                threads.id = $1
+            `,
+            values: [threadId],
+        }
+
+        const result = await this._pool.query(query);
+        return new ThreadDetail({ ...result.rows[0], date: new Date('2023-01-01'), comments: []})
     }
 }
 

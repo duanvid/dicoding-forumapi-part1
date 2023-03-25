@@ -7,10 +7,11 @@ const ThreadsTableTestHelper = {
         title = 'thread title',
         body = 'thread body',
         owner = 'user-123',
+        createdAt = new Date(),
     }) {
         await pool.query({
-            text: 'INSERT INTO threads VALUES($1, $2, $3, $4)',
-            values: [id, title, body, owner]
+            text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5)',
+            values: [id, title, body, owner, createdAt]
         })
     },
 
@@ -26,7 +27,7 @@ const ThreadsTableTestHelper = {
     },
 
     async cleanTable() {
-        await pool.query('TRUNCATE TABLE threads')
+        await pool.query('DELETE FROM threads where 1=1')
     }
 }
 

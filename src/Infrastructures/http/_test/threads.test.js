@@ -41,6 +41,30 @@ describe('/threads endpoint', () => {
             expect(response.statusCode).toEqual(201);
             expect(responseJson.status).toEqual('success');
             expect(responseJson.data.addedThread).toBeDefined()
+        });
+
+        it('should response 401 if request not contain or have invalid access token', async () => {
+            // Arrange
+            const requestPayload = {
+                title: 'thread title',
+                body: 'thread body'
+            }
+            const server = await createServer(container);
+            const accessToken = 'invalid accsess token';
+
+            // Action
+            const response = await server.inject({
+                method: 'POST',
+                url: '/threads',
+                payload: requestPayload,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            expect(response.statusCode).toEqual(401);
+            expect(response.statusMessage).toEqual('Unauthorized');
         })
 
         it('should response 400 when request payload not contain needed property', async () => {

@@ -17,6 +17,7 @@ describe('AddcommentUseCase', () => {
             content: useCasePayload.content,
             owner: credentialId
         });
+        const newComment = new NewComment(useCasePayload)
 
         /** use case dependencies */
         const mockCommentRepository = new CommentRepository();
@@ -37,8 +38,6 @@ describe('AddcommentUseCase', () => {
 
         // Assert
         expect(addedComment).toStrictEqual(mockAddedComment);
-        expect(mockCommentRepository.addComment).toBeCalledWith(new NewComment({
-            content: useCasePayload.content
-        }), credentialId)
+        expect(mockCommentRepository.addComment).toBeCalledWith({ newComment, credentialId, threadId })
     })
 })
