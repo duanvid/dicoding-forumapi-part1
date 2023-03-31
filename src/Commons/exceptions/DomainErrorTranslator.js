@@ -21,6 +21,8 @@ DomainErrorTranslator._directories = {
   'NEW_THREAD.NOT_CONTAIN_CORRECT_DATA_TYPE': new InvariantError('tidak dapat menambahkan threads, tipe data tidak valid'),
   'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('Tidak dapat menambahkan komentar, Payload content tidak valid'),
   'NEW_COMMENT.NOT_CONTAIN_CORRECT_DATA_TYPE': new InvariantError('Tidak dapat menambahkan komentar, tipe data komentar tidak sesuai'),
+  'NEW_REPLIES.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('Tidak dapat menambahkan balasan, payload tidak valid'),
+  'NEW_REPLIES.NOT_CONTAIN_CORRECT_DATA_TYPE': new InvariantError('Tidak dapat menambahkan balasan, tipe data tidak valid'),
 };
 
 module.exports = DomainErrorTranslator;

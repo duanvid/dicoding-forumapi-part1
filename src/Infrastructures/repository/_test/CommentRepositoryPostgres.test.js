@@ -28,12 +28,8 @@ describe('CommentRepositoryPostgres', () => {
       const credentialId = 'user-123';
       const fakeIdGenerator = () => '123';
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
-      await UsersTableTestHelper.addUser({
-        id: 'user-123', username: 'dicoding', password: 'secret', fullname: 'Dicoding Indonesia',
-      });
-      await ThreadsTableTestHelper.addThread({
-        id: 'thread-123', title: 'thread-title', body: 'thread body', owner: 'user-123', createdAt: new Date(),
-      });
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
 
       // Action
       await commentRepositoryPostgres.addComment({ newComment, credentialId, threadId: 'thread-123' });
@@ -82,15 +78,9 @@ describe('CommentRepositoryPostgres', () => {
       const commentId = 'comment-123';
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-      await UsersTableTestHelper.addUser({
-        id: 'user-123', username: 'dicoding', password: 'secret', fullname: 'Dicoding Indonesia',
-      });
-      await ThreadsTableTestHelper.addThread({
-        id: 'thread-123', title: 'thread title', body: 'thread body', owner: 'user-123', createdAt: new Date(),
-      });
-      await CommentTableTestHelper.addComment({
-        id: 'comment-123', content: 'thread comment', owner: 'user-123', threadId: 'thread-123',
-      });
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
 
       // Action
       await commentRepositoryPostgres.deleteCommentById(commentId);
@@ -116,7 +106,7 @@ describe('CommentRepositoryPostgres', () => {
       ];
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({ created_at: new Date('2023-01-01').toISOString() });
+      await CommentTableTestHelper.addComment({ createdAt: new Date('2023-01-01').toISOString() });
 
       // Action
       const thread = await commentRepositoryPostgres.getAllCommentsByThreadId(threadId);

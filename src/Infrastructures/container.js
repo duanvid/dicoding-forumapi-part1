@@ -31,6 +31,10 @@ const CommentRepositoryPostgres = require('./repository/CommentRepositoryPostgre
 const AddCommentUseCase = require('../Applications/use_case/AddCommentUseCase');
 const DeleteCommentUseCase = require('../Applications/use_case/DeleteCommentUseCase');
 const GetThreadDetailUseCase = require('../Applications/use_case/GetThreadDetailUseCase');
+const AddRepliesUseCase = require('../Applications/use_case/AddRepliesUseCase');
+const RepliesRepository = require('../Domains/replies/RepliesRepository');
+const RepliesRepositoryPostgres = require('./repository/RepliesRepositoryPostgres');
+const DeleteRepliesUseCase = require('../Applications/use_case/DeleteRepliesUseCase');
 
 // creating container
 const container = createContainer();
@@ -54,6 +58,20 @@ container.register([
   {
     key: ThreadRepository.name,
     Class: ThreadRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
+    key: RepliesRepository.name,
+    Class: RepliesRepositoryPostgres,
     parameter: {
       dependencies: [
         {
@@ -125,6 +143,40 @@ container.register([
         {
           name: 'commentRepository',
           internal: CommentRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddRepliesUseCase.name,
+    Class: AddRepliesUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
+        },
+        {
+          name: 'repliesRepository',
+          internal: RepliesRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: DeleteRepliesUseCase.name,
+    Class: DeleteRepliesUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
+        },
+        {
+          name: 'repliesRepository',
+          internal: RepliesRepository.name,
         },
       ],
     },

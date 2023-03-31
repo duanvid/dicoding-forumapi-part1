@@ -8,8 +8,7 @@ class GetThreadDetailUseCase {
     await this._threadRepository.verifyThreadId(payload);
     const comments = await this._commentRepository.getAllCommentsByThreadId(payload);
     const threadDetail = await this._threadRepository.getThreadById(payload);
-    const thread = { ...threadDetail, comments };
-    return thread;
+    return { ...threadDetail, comments };
   }
 }
 
