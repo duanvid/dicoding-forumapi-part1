@@ -14,4 +14,14 @@ const mapThread = (thread) => ({
   username: thread.username,
 });
 
-module.exports = { mapThreadComments, mapThread };
+const mapCommentReplies = (reply) => ({
+  id: reply.id,
+  content: reply.content,
+  createdAt: reply.created_at,
+  isDelete: reply.is_delete,
+  username: reply.username,
+});
+
+module.exports = {
+  mapThreadComments, mapThread, mapCommentReplies,
+};

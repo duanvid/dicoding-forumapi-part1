@@ -49,7 +49,7 @@ describe('Comment Details entities', () => {
     expect(content).toEqual(payload.content);
   });
 
-  it('should show content as **Komentar telah dihapus** if is_delete equal true', () => {
+  it('should show content as **komentar telah dihapus** if is_delete equal true', () => {
     // Arrange
     const payload = {
       id: 'comment-123',

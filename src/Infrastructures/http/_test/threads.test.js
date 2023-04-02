@@ -1,3 +1,5 @@
+const CommentTableTestHelper = require('../../../../tests/CommentTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
@@ -6,6 +8,17 @@ const pool = require('../../database/postgres/pool');
 const createServer = require('../createServer');
 
 describe('/threads endpoint', () => {
+  let server;
+  let accessToken;
+
+  beforeAll(async () => {
+    server = await createServer(container);
+  });
+
+  beforeEach(async () => {
+    accessToken = await ServerTestHelper.getAccessToken();
+  });
+
   afterAll(async () => {
     await pool.end();
   });
@@ -22,8 +35,6 @@ describe('/threads endpoint', () => {
         title: 'thread title',
         body: 'thread body',
       };
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
 
       // Action
       const response = await server.inject({
@@ -33,7 +44,6 @@ describe('/threads endpoint', () => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-
       });
 
       // Assert
@@ -49,8 +59,7 @@ describe('/threads endpoint', () => {
         title: 'thread title',
         body: 'thread body',
       };
-      const server = await createServer(container);
-      const accessToken = 'invalid accsess token';
+      const invalidAccessToken = 'invalid accsess token';
 
       // Action
       const response = await server.inject({
@@ -58,7 +67,7 @@ describe('/threads endpoint', () => {
         url: '/threads',
         payload: requestPayload,
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${invalidAccessToken}`,
         },
       });
 
@@ -72,8 +81,6 @@ describe('/threads endpoint', () => {
       const requestPayload = {
         title: 'thread title without body',
       };
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
 
       // Action
       const response = await server.inject({
@@ -98,8 +105,6 @@ describe('/threads endpoint', () => {
         title: ['thread title'],
         body: true,
       };
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
 
       // Action
       const response = await server.inject({
@@ -123,9 +128,11 @@ describe('/threads endpoint', () => {
     it('should response 200 and get persisted data', async () => {
       // Arrange
       const threadId = 'thread-123';
-      const server = await createServer(container);
-      await UsersTableTestHelper.addUser({});
+
+      /** menambahkan thread, komentar dan balasan komentar */
       await ThreadsTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
+      await RepliesTableTestHelper.addReplies({});
 
       // Action
       const response = await server.inject({
@@ -138,12 +145,20 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
       expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.comments).toBeDefined();
+      expect(responseJson.data.thread.comments).toHaveLength(1);
+      expect(responseJson.data.thread.comments[0].replies).toBeDefined();
+
+      await CommentTableTestHelper.cleanTable();
+      await RepliesTableTestHelper.cleanTable();
     });
 
     it('should response 404 if threadId is invalid', async () => {
       // Arrange
-      const threadId = 'invalid thread';
-      const server = await createServer(container);
+      const threadId = 'thread-123';
+
+      /** menambahkan thread dengan id: thread-234 */
+      await ThreadsTableTestHelper.addThread({ id: 'thread-234' });
 
       // Action
       const response = await server.inject({
@@ -155,6 +170,7 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toBeDefined();
     });
   });
 });

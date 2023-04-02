@@ -1,4 +1,4 @@
-const { mapThreadComments } = require('../../Applications/utils');
+const { mapThreadComments } = require('../../Commons/utils');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
@@ -74,20 +74,20 @@ class CommentRepositoryPostgres extends CommentRepository {
   async getAllCommentsByThreadId(threadId) {
     const query = {
       text: `
-                SELECT
-                    comments.id,
-                    username,
-                    created_at,
-                    content,
-                    is_delete
-                FROM
-                    comments
-                LEFT JOIN
-                    users
-                ON
-                    users.id = comments.owner
-                WHERE
-                    thread_id = $1`,
+              SELECT
+                comments.id,
+                username,
+                created_at,
+                content,
+                is_delete
+              FROM
+                comments
+              LEFT JOIN
+                users
+              ON
+                users.id = comments.owner
+              WHERE
+                thread_id = $1`,
       values: [threadId],
     };
 

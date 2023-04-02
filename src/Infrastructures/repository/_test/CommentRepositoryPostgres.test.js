@@ -92,7 +92,7 @@ describe('CommentRepositoryPostgres', () => {
   });
 
   describe('getAllCommentsByThreadsId function', () => {
-    it('should orchestrating get threads detail function correctly', async () => {
+    it('should orchestrating get all comments function correctly', async () => {
       // Arrange
       const threadId = 'thread-123';
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
@@ -109,10 +109,10 @@ describe('CommentRepositoryPostgres', () => {
       await CommentTableTestHelper.addComment({ createdAt: new Date('2023-01-01').toISOString() });
 
       // Action
-      const thread = await commentRepositoryPostgres.getAllCommentsByThreadId(threadId);
+      const comments = await commentRepositoryPostgres.getAllCommentsByThreadId(threadId);
 
       // Assert
-      expect(thread).toEqual(expectedThreadComments);
+      expect(comments).toEqual(expectedThreadComments);
     });
   });
 });

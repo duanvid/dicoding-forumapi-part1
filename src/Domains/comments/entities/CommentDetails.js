@@ -20,7 +20,7 @@ class CommentDetails {
   _verifyPayload({
     id, username, createdAt, content, isDelete,
   }) {
-    if (!id || !username || !createdAt || !content) {
+    if (!id || !username || !createdAt || !content || isDelete === undefined) {
       throw new Error('COMMENT_DETAILS.NOT_CONTAIN_NEEDED_PROPERTY');
     }
     if (typeof id !== 'string' || typeof username !== 'string' || typeof createdAt !== 'string' || typeof content !== 'string' || typeof isDelete !== 'boolean') {

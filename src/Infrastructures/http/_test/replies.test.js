@@ -8,6 +8,17 @@ const pool = require('../../database/postgres/pool');
 const createServer = require('../createServer');
 
 describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
+  let server;
+  let accessToken;
+
+  beforeAll(async () => {
+    server = await createServer(container);
+  });
+
+  beforeEach(async () => {
+    accessToken = await ServerTestHelper.getAccessToken();
+  });
+
   afterAll(async () => {
     await pool.end();
   });
@@ -27,8 +38,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       };
       const threadId = 'thread-123';
       const commentId = 'comment-123';
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
+
       await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
 
@@ -54,8 +64,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const requestPayload = {
         invalidPayload: 'invalid payload',
       };
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
+
       const threadId = 'thread-123';
       const commentId = 'comment-123';
       await ThreadsTableTestHelper.addThread({});
@@ -83,8 +92,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const requestPayload = {
         content: ['invalid payload data type'],
       };
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
+
       const threadId = 'thread-123';
       const commentId = 'comment-123';
       await ThreadsTableTestHelper.addThread({});
@@ -112,8 +120,8 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const requestPayload = {
         content: 'comment replies',
       };
-      const server = await createServer(container);
-      const accessToken = 'invalid access token';
+
+      const invalidAccessToken = 'invalid access token';
       const threadId = 'thread-123';
       const commentId = 'comment-123';
 
@@ -123,7 +131,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
         url: `/threads/${threadId}/comments/${commentId}/replies`,
         payload: requestPayload,
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${invalidAccessToken}`,
         },
       });
 
@@ -138,8 +146,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
         content: 'comment replies',
       };
 
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
       const threadId = 'invalid threadId';
       const commentId = 'invalid commentId';
 
@@ -168,8 +174,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const commentId = 'comment-123';
       const replyId = 'reply-123';
 
-      const server = await createServer(container);
-      const accessToken = await ServerTestHelper.getAccessToken();
       await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
       await RepliesTableTestHelper.addReplies({});
@@ -188,6 +192,75 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
       expect(responseJson.message).toEqual('Berhasil menghapus balasan');
+    });
+
+    it('should response 401 if request not contain or have invalid access token', async () => {
+      // Arrange
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const replyId = 'reply-123';
+
+      await ThreadsTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
+      await RepliesTableTestHelper.addReplies({});
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+      });
+
+      // Assert
+      expect(response.statusCode).toEqual(401);
+    });
+
+    it('should response 404 if parameter not contain correct threadId, commentId, or replyId', async () => {
+      // Arrange
+      const threadId = 'invalid threadId';
+      const commentId = 'comment-123';
+      const replyId = 'reply-123';
+
+      await ThreadsTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      expect(response.statusCode).toEqual(404);
+    });
+
+    it('should response 403 if request not contain correct owner', async () => {
+      // Arrange
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const replyId = 'reply-123';
+
+      await ThreadsTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
+
+      /** menambahkan balasan baru dengan user riduan, id: user-234 */
+      await UsersTableTestHelper.addUser({ id: 'user-234', username: 'riduan' });
+      await RepliesTableTestHelper.addReplies({ id: 'reply-123', owner: 'user-234' });
+
+      // Action
+      /** menghapus balasan dengan user dicoding, id:user-123 */
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      expect(response.statusCode).toEqual(403);
     });
   });
 });

@@ -9,7 +9,7 @@ class ReplyDetails {
     this.username = username;
 
     if (isDelete) {
-      this.content = '**balasan sudah dihapus**';
+      this.content = '**balasan telah dihapus**';
     } else {
       this.content = content;
     }
@@ -18,7 +18,7 @@ class ReplyDetails {
   _verifyPayload({
     id, content, createdAt, isDelete, username,
   }) {
-    if (!id || !content || !createdAt || !username) {
+    if (!id || !content || !createdAt || !username || isDelete === undefined) {
       throw new Error('REPLY_DETAILS.NOT_CONTAIN_NEEDED_PROPERTY');
     }
     if (typeof id !== 'string' || typeof content !== 'string' || typeof createdAt !== 'string' || typeof isDelete !== 'boolean' || typeof username !== 'string') {

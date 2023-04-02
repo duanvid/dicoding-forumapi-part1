@@ -50,7 +50,7 @@ describe('ReplyDetails entities', () => {
     expect(username).toEqual(payload.username);
   });
 
-  it('should show content as **balasan sudah dihapus** if isDelete equal TRUE', () => {
+  it('should show content as **balasan telah dihapus** if isDelete equal TRUE', () => {
     // Arrange
     const payload = {
       id: 'reply-123',
@@ -67,7 +67,7 @@ describe('ReplyDetails entities', () => {
 
     // Assert
     expect(id).toEqual(payload.id);
-    expect(content).toEqual('**balasan sudah dihapus**');
+    expect(content).toEqual('**balasan telah dihapus**');
     expect(date).toEqual(payload.createdAt);
     expect(username).toEqual(payload.username);
   });

@@ -1,4 +1,4 @@
-const { mapThread } = require('../../Applications/utils');
+const { mapThread } = require('../../Commons/utils');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedThread = require('../../Domains/threads/entities/AddedThread');
 const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail');

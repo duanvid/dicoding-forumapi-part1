@@ -1,6 +1,8 @@
+const { mapCommentReplies } = require('../../Commons/utils');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedReplies = require('../../Domains/replies/entities/AddedReplies');
+const ReplyDetails = require('../../Domains/replies/entities/ReplyDetails');
 const RepliesRepository = require('../../Domains/replies/RepliesRepository');
 
 class RepliesRepositoryPostgres extends RepliesRepository {
@@ -55,6 +57,35 @@ class RepliesRepositoryPostgres extends RepliesRepository {
     if (!result.rowCount) {
       throw new NotFoundError('Komentar atau balasan tidak ditemukan');
     }
+  }
+
+  async getAllRepliesByCommentId(commentId) {
+    const query = {
+      text: `
+              SELECT
+                replies.id,
+                content,
+                created_at,
+                replies.is_delete,
+                username
+              FROM
+                replies
+              LEFT JOIN
+                users
+              ON
+                users.id = replies.owner
+              WHERE
+                comment_id = $1
+              ORDER BY
+                replies.created_at
+              ASC`,
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+    const rawReplies = result.rows.map(mapCommentReplies);
+    const replies = rawReplies.map((reply) => new ReplyDetails(reply));
+    return replies;
   }
 }
 

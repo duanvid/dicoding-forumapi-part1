@@ -16,7 +16,7 @@ describe('AddRepliesUseCase', () => {
     };
     const credentialId = 'user-123';
 
-    const expectedAddedReplies = new AddedReplies({
+    const mockAddedReplies = new AddedReplies({
       id: 'reply-123',
       content: useCasePayload.content,
       owner: credentialId,
@@ -32,11 +32,7 @@ describe('AddRepliesUseCase', () => {
     mockCommentRepository.verifyThreadComment = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockRepliesRepository.addReplies = jest.fn()
-      .mockImplementation(() => Promise.resolve(new AddedReplies({
-        id: 'reply-123',
-        content: useCasePayload.content,
-        owner: credentialId,
-      })));
+      .mockImplementation(() => Promise.resolve(mockAddedReplies));
 
     /** use case instances */
     const getAddedRepliesUseCase = new AddRepliesUseCase({
@@ -50,7 +46,12 @@ describe('AddRepliesUseCase', () => {
     });
 
     // Assert
-    expect(addedReplies).toStrictEqual(expectedAddedReplies);
+    expect(addedReplies).toStrictEqual(new AddedReplies({
+      id: 'reply-123',
+      content: useCasePayload.content,
+      owner: credentialId,
+    }));
+
     expect(mockCommentRepository.verifyThreadComment)
       .toBeCalledWith(useCaseParameter.threadId, useCaseParameter.commentId);
     expect(mockRepliesRepository.addReplies)
