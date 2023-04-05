@@ -148,9 +148,6 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments).toBeDefined();
       expect(responseJson.data.thread.comments).toHaveLength(1);
       expect(responseJson.data.thread.comments[0].replies).toBeDefined();
-
-      await CommentTableTestHelper.cleanTable();
-      await RepliesTableTestHelper.cleanTable();
     });
 
     it('should response 404 if threadId is invalid', async () => {

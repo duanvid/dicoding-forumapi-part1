@@ -9,10 +9,11 @@ const CommentTableTestHelper = {
     owner = 'user-123',
     threadId = 'thread-123',
     createdAt = new Date(),
+    isDelete = false,
   }) {
     await pool.query({
       text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6)',
-      values: [id, content, owner, false, threadId, createdAt],
+      values: [id, content, owner, isDelete, threadId, createdAt],
     });
   },
 

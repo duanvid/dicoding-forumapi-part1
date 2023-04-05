@@ -16,6 +16,7 @@ describe('/threads/{threadId}/comments end point', () => {
 
   beforeEach(async () => {
     accessToken = await ServerTestHelper.getAccessToken();
+    await ThreadsTableTestHelper.addThread({});
   });
 
   afterAll(async () => {
@@ -35,7 +36,6 @@ describe('/threads/{threadId}/comments end point', () => {
         content: 'thread comment',
       };
       const threadId = 'thread-123';
-      await ThreadsTableTestHelper.addThread({});
 
       // Action
       const response = await server.inject({
@@ -59,8 +59,6 @@ describe('/threads/{threadId}/comments end point', () => {
       const requestPayload = {
         invalidContent: 'invalid payload content',
       };
-
-      await ThreadsTableTestHelper.addThread({});
       const threadId = 'thread-123';
 
       // Action
@@ -85,7 +83,6 @@ describe('/threads/{threadId}/comments end point', () => {
       const requestPayload = {
         content: ['thread comment in array format'],
       };
-      await ThreadsTableTestHelper.addThread({});
       const threadId = 'thread-123';
 
       // Action
@@ -133,7 +130,6 @@ describe('/threads/{threadId}/comments end point', () => {
       const requestPayload = {
         content: 'thread comment',
       };
-      await ThreadsTableTestHelper.addThread({});
       const threadId = 'invalid-threadId';
 
       // Action
@@ -160,7 +156,6 @@ describe('/threads/{threadId}/comments end point', () => {
       const threadId = 'thread-123';
       const commentId = 'comment-123';
 
-      await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
 
       // Action
@@ -184,8 +179,6 @@ describe('/threads/{threadId}/comments end point', () => {
       const threadId = 'thread-234';
       const commentId = 'comment-123';
 
-      await ThreadsTableTestHelper.addThread({});
-
       // Action
       const response = await server.inject({
         method: 'DELETE',
@@ -206,8 +199,6 @@ describe('/threads/{threadId}/comments end point', () => {
       // Arrange
       const threadId = 'thread-123';
       const commentId = 'comment-123';
-
-      await ThreadsTableTestHelper.addThread({});
 
       /** menambahkan komentar baru dengan user riduan, id: user-234 */
       await UsersTableTestHelper.addUser({ id: 'user-234', username: 'riduan' });

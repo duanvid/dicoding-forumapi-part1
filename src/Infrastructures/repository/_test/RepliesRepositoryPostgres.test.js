@@ -4,11 +4,19 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const AddedReplies = require('../../../Domains/replies/entities/AddedReplies');
 const NewReplies = require('../../../Domains/replies/entities/NewReplies');
+const ReplyDetails = require('../../../Domains/replies/entities/ReplyDetails');
 const pool = require('../../database/postgres/pool');
 const RepliesRepositoryPostgres = require('../RepliesRepositoryPostgres');
 
 describe('RepliesRepositoryPostgres', () => {
+  let repliesRepositoryPostgres;
+
+  beforeEach(() => {
+    repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
+  });
+
   afterEach(async () => {
     await UsersTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
@@ -21,7 +29,7 @@ describe('RepliesRepositoryPostgres', () => {
   });
 
   describe('addReplies function orchestration', () => {
-    it('should persist add replies to comment', async () => {
+    it('should persist add replies to comment and return added reply correctly', async () => {
       // Arrange
       const newReplies = new NewReplies({
         content: 'comment replies',
@@ -31,26 +39,32 @@ describe('RepliesRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123';
       const commentId = 'comment-123';
 
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, fakeIdGenerator);
+      repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, fakeIdGenerator);
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
 
       // Action
-      await repliesRepositoryPostgres.addReplies({ newReplies, credentialId, commentId });
+      const addedReplies = await repliesRepositoryPostgres.addReplies({
+        newReplies, credentialId, commentId,
+      });
 
       // Assert
-      const addedReplies = await RepliesTableTestHelper.getRepliesById('reply-123');
-      expect(addedReplies).toHaveLength(1);
+      const replies = await RepliesTableTestHelper.getRepliesById('reply-123');
+      expect(replies).toHaveLength(1);
+      expect(addedReplies).toStrictEqual(new AddedReplies({
+        id: 'reply-123',
+        content: 'comment replies',
+        owner: 'user-123',
+      }));
     });
   });
 
   describe('verifyReplyOwner function', () => {
-    it('should persist verify reply owner', async () => {
+    it('should not throw AuthorizationError if request owner equal to reply owner', async () => {
       // Arrange
       const userId = 'user-123';
       const replyId = 'reply-123';
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
@@ -61,11 +75,12 @@ describe('RepliesRepositoryPostgres', () => {
         .resolves.not.toThrowError(AuthorizationError);
     });
 
-    it('should throw Authorizationerror if not the owner', async () => {
+    it('should throw Authorizationerror if request owner not equal reply owner', async () => {
       // Arrange
       const userId = 'user-234';
       const replyId = 'reply-123';
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
+
+      /** menambahkan data sebagai user-123 */
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
@@ -81,7 +96,6 @@ describe('RepliesRepositoryPostgres', () => {
     it('should persist delete reply action corectly', async () => {
       // Arrange
       const replyId = 'reply-123';
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
       await CommentTableTestHelper.addComment({});
@@ -92,16 +106,15 @@ describe('RepliesRepositoryPostgres', () => {
 
       // Assert
       const succesfullyDeleteReply = await RepliesTableTestHelper.getDeletedReply('reply-123');
-      expect(succesfullyDeleteReply).toEqual(true);
+      expect(succesfullyDeleteReply).toStrictEqual(true);
     });
   });
 
   describe('verifyCommentReplies function', () => {
-    it('should persist verify comment replies action correctly', async () => {
+    it('should not throw NotFoundError if comment and replies available', async () => {
       // Arrange
       const replyId = 'reply-123';
       const commentId = 'comment-123';
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
 
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
@@ -117,7 +130,21 @@ describe('RepliesRepositoryPostgres', () => {
       // Arrange
       const replyId = 'reply-234';
       const commentId = 'comment-123';
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
+
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
+      await RepliesTableTestHelper.addReplies({});
+
+      // Action and Assert
+      await expect(repliesRepositoryPostgres.verifyCommentReplies(commentId, replyId))
+        .rejects.toThrow(NotFoundError);
+    });
+
+    it('should throw not found error if comment id not match with database', async () => {
+      // Arrange
+      const replyId = 'reply-123';
+      const commentId = 'comment-234';
 
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
@@ -134,14 +161,14 @@ describe('RepliesRepositoryPostgres', () => {
     it('should orchestrating get all replies function correctly', async () => {
       // Arrange
       const commentId = 'comment-123';
-      const repliesRepositoryPostgres = new RepliesRepositoryPostgres(pool, {});
       const expectedCommentReplies = [
-        {
+        new ReplyDetails({
           id: 'reply-123',
           content: 'comment replies',
-          date: new Date('2023-01-01').toISOString(),
+          createdAt: new Date('2023-01-01').toISOString(),
           username: 'dicoding',
-        },
+          isDelete: false,
+        }),
       ];
 
       await UsersTableTestHelper.addUser({});
@@ -153,7 +180,7 @@ describe('RepliesRepositoryPostgres', () => {
       const replies = await repliesRepositoryPostgres.getAllRepliesByCommentId(commentId);
 
       // Assert
-      expect(replies).toEqual(expectedCommentReplies);
+      expect(replies).toStrictEqual(expectedCommentReplies);
     });
   });
 });

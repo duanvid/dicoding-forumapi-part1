@@ -17,6 +17,8 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
 
   beforeEach(async () => {
     accessToken = await ServerTestHelper.getAccessToken();
+    await ThreadsTableTestHelper.addThread({});
+    await CommentTableTestHelper.addComment({});
   });
 
   afterAll(async () => {
@@ -38,9 +40,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       };
       const threadId = 'thread-123';
       const commentId = 'comment-123';
-
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
 
       // Action
       const response = await server.inject({
@@ -67,8 +66,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
 
       const threadId = 'thread-123';
       const commentId = 'comment-123';
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
 
       // Action
       const response = await server.inject({
@@ -95,8 +92,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
 
       const threadId = 'thread-123';
       const commentId = 'comment-123';
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
 
       // Action
       const response = await server.inject({
@@ -174,8 +169,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const commentId = 'comment-123';
       const replyId = 'reply-123';
 
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
       await RepliesTableTestHelper.addReplies({});
 
       // Action
@@ -200,8 +193,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const commentId = 'comment-123';
       const replyId = 'reply-123';
 
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
       await RepliesTableTestHelper.addReplies({});
 
       // Action
@@ -219,9 +210,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const threadId = 'invalid threadId';
       const commentId = 'comment-123';
       const replyId = 'reply-123';
-
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
 
       // Action
       const response = await server.inject({
@@ -241,9 +229,6 @@ describe('/threads/{threadId}/comments/{commentId}/replies end point', () => {
       const threadId = 'thread-123';
       const commentId = 'comment-123';
       const replyId = 'reply-123';
-
-      await ThreadsTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
 
       /** menambahkan balasan baru dengan user riduan, id: user-234 */
       await UsersTableTestHelper.addUser({ id: 'user-234', username: 'riduan' });
