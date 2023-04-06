@@ -10,6 +10,22 @@ describe('GetThreadDetailUseCase', () => {
   it('should orchestrating the get thread detail action correctly', async () => {
     // Arrange
     const payload = 'thread-123';
+    const expectedThreadComments = [
+      new CommentDetails({
+        id: 'comment-123',
+        content: 'thread comment',
+        createdAt: new Date('2023-01-01').toISOString(),
+        username: 'dicoding',
+        isDelete: false,
+      }),
+      new CommentDetails({
+        id: 'comment-234',
+        content: 'thread comment',
+        createdAt: new Date('2023-01-02').toISOString(),
+        username: 'riduan',
+        isDelete: false,
+      }),
+    ];
 
     const expectedThreadDetail = {
       ...(new ThreadDetail({
@@ -121,6 +137,11 @@ describe('GetThreadDetailUseCase', () => {
     expect(threadDetail).toStrictEqual(expectedThreadDetail);
     expect(mockThreadRepository.verifyThreadId).toBeCalledWith(payload);
     expect(mockThreadRepository.getThreadById).toBeCalledWith(payload);
+    expect(mockCommentRepository.getAllCommentsByThreadId).toBeCalledWith(payload);
     expect(mockRepliesRepository.getAllRepliesByCommentId).toBeCalledTimes(2);
+    expect(mockRepliesRepository.getAllRepliesByCommentId)
+      .toHaveBeenNthCalledWith(1, expectedThreadComments[0].id);
+    expect(mockRepliesRepository.getAllRepliesByCommentId)
+      .toHaveBeenNthCalledWith(2, expectedThreadComments[1].id);
   });
 });

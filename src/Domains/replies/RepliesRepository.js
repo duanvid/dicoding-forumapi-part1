@@ -3,6 +3,10 @@ class RepliesRepository {
     throw new Error('REPLIES_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async verifyReplyOwner(replyId, userId) {
+    throw new Error('REPLIES_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async getAllRepliesByCommentId(commentId) {
     throw new Error('REPLIES_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
