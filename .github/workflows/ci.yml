@@ -43,8 +43,8 @@ jobs:
         PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
         ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
         REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
-        PGHOST: ${{ secrets.PGHOST }}
-        PGUSER: ${{ secrets.PGUSER }}
-        PGDATABASE: ${{ secrets.PGDATABASE }}
-        PGPASSWORD: ${{ secrets.PGPASSWORD }}
-        PGPORT: ${{ secrets.PORT }}
+        PGHOST: ${{ secrets.PGHOST_TEST }}
+        PGUSER: ${{ secrets.PGUSER_TEST }}
+        PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
+        PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+        PGPORT: ${{ secrets.PORT_TEST }}
