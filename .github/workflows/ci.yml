@@ -3,16 +3,7 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      -main
-
-services:
-  postgres:
-    image: postgres:14
-    env:
-      PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
-      PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
-    ports:
-      - 5432: ${{ secrets.PGPORT_TEST }}
+      -master
 
 jobs:
   test:
@@ -22,10 +13,19 @@ jobs:
       matrix:
         node-version: [16.x]
 
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: ${{ secrets.PGUSER_TEST }}
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+        ports:
+          - 5432: ${{ secrets.PGPORT_TEST }}
+
     steps:
-    - uses: action/checkout@v3
+    - uses: action/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
     - name: npm install migrate and test
