@@ -1,4 +1,3 @@
-const { mapThread } = require('../../Commons/utils');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedThread = require('../../Domains/threads/entities/AddedThread');
 const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail');
@@ -44,7 +43,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
                 title,
                 body,
                 username,
-                created_at
+                created_at as "createdAt"
             FROM
                 threads
             LEFT JOIN
@@ -58,8 +57,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     };
 
     const result = await this._pool.query(query);
-    const thread = result.rows.map(mapThread);
-    return new ThreadDetail({ ...thread[0] });
+    return new ThreadDetail(result.rows[0]);
   }
 }
 

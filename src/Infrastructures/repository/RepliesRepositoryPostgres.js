@@ -1,4 +1,3 @@
-const { mapCommentReplies } = require('../../Commons/utils');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedReplies = require('../../Domains/replies/entities/AddedReplies');
@@ -59,32 +58,31 @@ class RepliesRepositoryPostgres extends RepliesRepository {
     }
   }
 
-  async getAllRepliesByCommentId(commentId) {
+  async getAllRepliesByThreadId(threadhId) {
     const query = {
       text: `
               SELECT
                 replies.id,
-                content,
-                created_at,
-                replies.is_delete,
-                username
+                replies.content,
+                replies.created_at as "createdAt",
+                replies.is_delete as "isDelete",
+                username,
+                replies.comment_id as "commentId"
               FROM
-                replies
-              LEFT JOIN
-                users
-              ON
-                users.id = replies.owner
+                threads
+                JOIN comments ON threads.id = comments.thread_id
+                JOIN replies ON comments.id = replies.comment_id
+                JOIN users ON users.id = replies.owner
               WHERE
-                comment_id = $1
+                threads.id = $1
               ORDER BY
                 replies.created_at
               ASC`,
-      values: [commentId],
+      values: [threadhId],
     };
 
     const result = await this._pool.query(query);
-    const rawReplies = result.rows.map(mapCommentReplies);
-    const replies = rawReplies.map((reply) => new ReplyDetails(reply));
+    const replies = result.rows.map((reply) => new ReplyDetails(reply));
     return replies;
   }
 }

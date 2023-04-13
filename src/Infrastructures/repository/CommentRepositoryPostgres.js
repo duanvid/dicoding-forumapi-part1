@@ -1,4 +1,3 @@
-const { mapThreadComments } = require('../../Commons/utils');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
@@ -23,7 +22,7 @@ class CommentRepositoryPostgres extends CommentRepository {
     };
 
     const result = await this._pool.query(query);
-    return new AddedComment({ ...result.rows[0] });
+    return new AddedComment(result.rows[0]);
   }
 
   async verifyThreadComment(threadId, commentId) {
@@ -65,9 +64,9 @@ class CommentRepositoryPostgres extends CommentRepository {
               SELECT
                 comments.id,
                 username,
-                created_at,
+                created_at as "createdAt",
                 content,
-                is_delete
+                is_delete as "isDelete"
               FROM
                 comments
               LEFT JOIN
@@ -83,8 +82,7 @@ class CommentRepositoryPostgres extends CommentRepository {
     };
 
     const result = await this._pool.query(query);
-    const rawComments = result.rows.map(mapThreadComments);
-    const comments = rawComments.map((comment) => new CommentDetails(comment));
+    const comments = result.rows.map((comment) => new CommentDetails(comment));
     return comments;
   }
 }

@@ -160,7 +160,7 @@ describe('RepliesRepositoryPostgres', () => {
   describe('getAllRepliesByCommentId function', () => {
     it('should orchestrating get all replies function correctly', async () => {
       // Arrange
-      const commentId = 'comment-123';
+      const threadId = 'thread-123';
       const expectedCommentReplies = [
         new ReplyDetails({
           id: 'reply-123',
@@ -168,6 +168,7 @@ describe('RepliesRepositoryPostgres', () => {
           createdAt: new Date('2023-01-01').toISOString(),
           username: 'dicoding',
           isDelete: false,
+          commentId: 'comment-123',
         }),
       ];
 
@@ -177,7 +178,7 @@ describe('RepliesRepositoryPostgres', () => {
       await RepliesTableTestHelper.addReplies({ createdAt: new Date('2023-01-01').toISOString() });
 
       // Action
-      const replies = await repliesRepositoryPostgres.getAllRepliesByCommentId(commentId);
+      const replies = await repliesRepositoryPostgres.getAllRepliesByThreadId(threadId);
 
       // Assert
       expect(replies).toStrictEqual(expectedCommentReplies);

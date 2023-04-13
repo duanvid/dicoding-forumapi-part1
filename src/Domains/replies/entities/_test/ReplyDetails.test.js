@@ -22,6 +22,7 @@ describe('ReplyDetails entities', () => {
       createdAt: new Date('2023-01-01').toISOString(),
       isDelete: 'false',
       username: true,
+      commentId: 'comment-123',
     };
 
     // Action and Assert
@@ -36,11 +37,12 @@ describe('ReplyDetails entities', () => {
       createdAt: new Date('2023-01-01').toISOString(),
       isDelete: false,
       username: 'dicoding',
+      commentId: 'comment-123',
     };
 
     // Action
     const {
-      id, content, date, username,
+      id, content, date, username, commentId,
     } = new ReplyDetails(payload);
 
     // Assert
@@ -48,6 +50,7 @@ describe('ReplyDetails entities', () => {
     expect(content).toEqual(payload.content);
     expect(date).toEqual(payload.createdAt);
     expect(username).toEqual(payload.username);
+    expect(commentId).toEqual(payload.commentId);
   });
 
   it('should show content as **balasan telah dihapus** if isDelete equal TRUE', () => {
@@ -58,11 +61,12 @@ describe('ReplyDetails entities', () => {
       createdAt: new Date('2023-01-01').toISOString(),
       isDelete: true,
       username: 'dicoding',
+      commentId: 'comment-123',
     };
 
     // Action
     const {
-      id, content, date, username,
+      id, content, date, username, commentId,
     } = new ReplyDetails(payload);
 
     // Assert
@@ -70,5 +74,6 @@ describe('ReplyDetails entities', () => {
     expect(content).toEqual('**balasan telah dihapus**');
     expect(date).toEqual(payload.createdAt);
     expect(username).toEqual(payload.username);
+    expect(commentId).toEqual(payload.commentId);
   });
 });

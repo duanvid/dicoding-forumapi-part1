@@ -9,9 +9,10 @@ class GetThreadDetailUseCase {
     await this._threadRepository.verifyThreadId(payload);
     const ThreadDetail = await this._threadRepository.getThreadById(payload);
     const ThreadComments = await this._commentRepository.getAllCommentsByThreadId(payload);
-    const ThreadCommentsWithReplies = await Promise.all(ThreadComments.map(async (comment) => ({
-      ...comment, replies: await this._repliesRepository.getAllRepliesByCommentId(comment.id),
-    })));
+    const CommentReplies = await this._repliesRepository.getAllRepliesByThreadId(payload);
+    const ThreadCommentsWithReplies = ThreadComments.map((comment) => ({
+      ...comment, replies: CommentReplies.filter((reply) => (reply.commentId === comment.id)),
+    }));
     return { ...ThreadDetail, comments: ThreadCommentsWithReplies };
   }
 }

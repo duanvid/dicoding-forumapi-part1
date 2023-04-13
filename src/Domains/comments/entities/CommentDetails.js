@@ -9,12 +9,7 @@ class CommentDetails {
     this.id = id;
     this.username = username;
     this.date = createdAt;
-
-    if (isDelete) {
-      this.content = '**komentar telah dihapus**';
-    } else {
-      this.content = content;
-    }
+    this.content = isDelete ? '**komentar telah dihapus**' : content;
   }
 
   _verifyPayload({
