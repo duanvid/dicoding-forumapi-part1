@@ -1,6 +1,5 @@
 class ReplyDetails {
   constructor(payload) {
-    console.log(payload);
     this._verifyPayload(payload);
     const {
       id, content, createdAt, isDelete, username, commentId,
